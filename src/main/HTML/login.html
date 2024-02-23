@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login</title>
+  <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+  <script src="https://apis.google.com/js/platform.js"></script>
+</head>
+<body>
+  <div>
+    <h1>Login</h1>
+    <sec:authentication notFound="true">
+      <button id="google-sign-in-btn" onclick="googleSignIn()">Sign in with Google</button>
+    </sec:authentication>
+    <sec:authentication name="user">
+      Welcome, <sec:authentication property="name"/>!
+    </sec:authentication>
+  </div>
+  
+  <script>
+    function googleSignIn() {
+      // Replace with your client ID
+      const clientId = "YOUR_CLIENT_ID";
+      gapi.auth2.init({
+        client_id: clientId,
+        scope: "profile email"
+      }).then(() => {
+        const auth2 = gapi.auth2.getAuthInstance();
+        auth2.signIn().then((googleUser) => {
+          // Extract user profile data
+          const profile = googleUser.getBasicProfile();
+          const idToken = googleUser.getAuthResponse().id_token;
+          
+          // Send user data and ID token to server for authentication
+          fetch("/login/google", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              idToken: idToken,
+              name: profile.getName(),
+              email: profile.getEmail()
+            })
+          })
+          .then(response => {
+            if (response.ok) {
+              // Redirect to homepage based on role
+              window.location.href = "/home";
+            } else {
+              // Handle authentication failure
+              console.error("Authentication failed");
+            }
+          });
+        });
+      });
+    }
+  </script>
+</body>
+</html>

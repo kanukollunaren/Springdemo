@@ -42,12 +42,6 @@ Create a Helm chart to manage deployment:
 Define values.yaml with configuration details (image name, port, etc.).
 Use manifests (Deployment, Service) to orchestrate deployment.
 Deploy the chart using helm install your-chart-name -f values.yaml.
-7. GitHub Repository:
 
-Create a GitHub repository to store your project code.
-Initialize it with git init.
-Add files and commit them using git add and git commit.
-Push to GitHub using git push origin main.
-Code Example (Illustrative, adapt to your project structure):
 
-GoogleLoginController.java:
+

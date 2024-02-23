@@ -1,13 +1,28 @@
-package com.example.demo;
+@Controller
+public class GoogleLoginController {
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+    @Autowired
+    private GoogleOAuth2UserService googleOAuth2UserService;
 
-@SpringBootApplication
-public class DemoApplication {
+    @Autowired
+    private UserService userService; // Assuming a UserService for user management
 
-	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
-	}
+    @GetMapping("/login")
+    public String login() {
+        return "redirect:/oauth2/authorization/google";
+    }
 
+    @GetMapping("/oauth2/callback/google")
+    public Mono<String> googleCallback(AuthenticationPrincipal principal) {
+        GoogleUser user = GoogleUser.class.cast(principal);
+        String email = user.getEmail();
+
+        // Create or authenticate user, store details (if using database)
+        User dbUser = userService.createUser(user);
+
+        // Redirect to authorized home page
+        return Mono.just("redirect:/home");
+    }
+
+   
 }
